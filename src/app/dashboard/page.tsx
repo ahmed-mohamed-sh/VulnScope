@@ -4,11 +4,18 @@ import { prisma } from "@/lib/prisma";
 import { Shield, Search, FileText, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import DashboardCharts from "./DashboardCharts";
+export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
+  // Get fresh user data from DB
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+  });
+  console.log("session name:", session.user?.name);
+  console.log("db name:", user?.name);
   const scans = await prisma.scan.findMany({
     where: { userId: session.user.id },
     include: { vulnerabilities: true, report: true },
@@ -108,7 +115,7 @@ export default async function DashboardPage() {
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-white">
-          Welcome back, {session.user?.name?.split(" ")[0]} 👋
+          Welcome back, {user?.name?.split(" ")[0]} 👋
         </h1>
         <p className="text-zinc-500 mt-1">Here's your security overview</p>
       </div>
