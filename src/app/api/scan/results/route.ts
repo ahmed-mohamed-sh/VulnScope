@@ -1,0 +1,63 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { analyzeScan } from "@/lib/ai-analysis";
+
+export async function POST(req: Request) {
+  try {
+    const { scanId, vulnerabilities } = await req.json();
+
+    // Save vulnerabilities
+    if (vulnerabilities.length > 0) {
+      await prisma.vulnerability.createMany({
+        data: vulnerabilities.map((v: any) => ({
+          scanId,
+          title: v.title,
+          description: v.description,
+          severity: v.severity,
+          category: v.category,
+          evidence: v.evidence,
+          fix: v.fix,
+        })),
+      });
+    }
+
+    // Get target URL for AI analysis
+    const scan = await prisma.scan.findUnique({
+      where: { id: scanId },
+    });
+
+    // Run AI analysis
+    let aiResult = null;
+    if (vulnerabilities.length > 0 && scan) {
+      aiResult = await analyzeScan(vulnerabilities, scan.targetUrl);
+    }
+
+    // Save report
+    if (aiResult) {
+      await prisma.report.create({
+        data: {
+          scanId,
+          summary: aiResult.executiveSummary,
+          score: aiResult.securityScore,
+        },
+      });
+    }
+
+    // Update scan status
+    await prisma.scan.update({
+      where: { id: scanId },
+      data: {
+        status: "COMPLETED",
+        completedAt: new Date(),
+      },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 },
+    );
+  }
+}
