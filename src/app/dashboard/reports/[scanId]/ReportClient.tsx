@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Shield, AlertTriangle, CheckCircle, Clock, Globe } from "lucide-react";
 
 const severityConfig = {
@@ -33,7 +32,6 @@ const severityConfig = {
 };
 
 export default function ReportClient({ initialScan }: { initialScan: any }) {
-  const router = useRouter();
   const [scan, setScan] = useState(initialScan);
 
   useEffect(() => {
@@ -51,16 +49,17 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
     return () => clearInterval(interval);
   }, [scan.status]);
 
-  const criticalCount = scan.vulnerabilities.filter(
+  const vulnerabilities = scan.vulnerabilities ?? [];
+  const criticalCount = vulnerabilities.filter(
     (v: any) => v.severity === "CRITICAL",
   ).length;
-  const highCount = scan.vulnerabilities.filter(
+  const highCount = vulnerabilities.filter(
     (v: any) => v.severity === "HIGH",
   ).length;
-  const mediumCount = scan.vulnerabilities.filter(
+  const mediumCount = vulnerabilities.filter(
     (v: any) => v.severity === "MEDIUM",
   ).length;
-  const lowCount = scan.vulnerabilities.filter(
+  const lowCount = vulnerabilities.filter(
     (v: any) => v.severity === "LOW",
   ).length;
 
@@ -78,7 +77,6 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
               <Globe className="w-3 h-3 text-zinc-500" />
               <span className="text-zinc-500 text-sm">{scan.targetUrl}</span>
             </div>
-            {/* Download PDF button */}
             <a
               href={`/api/scan/${scan.id}/pdf`}
               target="_blank"
@@ -116,6 +114,76 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
         </div>
       )}
 
+      {/* AI Analysis */}
+      {scan.report && (
+        <div className="bg-[#0d0d14] border border-emerald-500/20 rounded-2xl p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+            <h2 className="text-white font-semibold">AI Security Analysis</h2>
+          </div>
+
+          <div className="flex items-center gap-4 mb-4">
+            <div className="relative w-16 h-16">
+              <svg className="w-16 h-16 -rotate-90" viewBox="0 0 36 36">
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#1e1e2e"
+                  strokeWidth="3"
+                />
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke={
+                    scan.report.score >= 70
+                      ? "#10b981"
+                      : scan.report.score >= 40
+                        ? "#f59e0b"
+                        : "#ef4444"
+                  }
+                  strokeWidth="3"
+                  strokeDasharray={`${scan.report.score}, 100`}
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-white text-sm font-bold">
+                  {scan.report.score}
+                </span>
+              </div>
+            </div>
+            <div>
+              <p className="text-zinc-500 text-xs uppercase tracking-wider">
+                Security Score
+              </p>
+              <p
+                className={`text-lg font-bold ${
+                  scan.report.score >= 70
+                    ? "text-emerald-400"
+                    : scan.report.score >= 40
+                      ? "text-yellow-400"
+                      : "text-red-400"
+                }`}
+              >
+                {scan.report.score >= 70
+                  ? "Good"
+                  : scan.report.score >= 40
+                    ? "Needs Work"
+                    : "Critical Risk"}
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-white/[0.02] border border-white/[0.04] rounded-xl p-4">
+            <p className="text-xs text-zinc-500 uppercase tracking-wider mb-2">
+              Executive Summary
+            </p>
+            <p className="text-zinc-300 text-sm leading-relaxed">
+              {scan.report.summary}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Status + Meta */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-[#0d0d14] border border-white/[0.06] rounded-xl p-4">
@@ -145,7 +213,7 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
         <div className="bg-[#0d0d14] border border-white/[0.06] rounded-xl p-4">
           <p className="text-zinc-500 text-xs mb-1">Total Issues</p>
           <p className="text-white font-bold text-xl">
-            {scan.vulnerabilities.length}
+            {vulnerabilities.length}
           </p>
         </div>
 
@@ -210,7 +278,7 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
       {/* Vulnerabilities */}
       <div className="space-y-4">
         <h2 className="text-white font-semibold">Vulnerabilities Found</h2>
-        {scan.vulnerabilities.length === 0 ? (
+        {vulnerabilities.length === 0 ? (
           <div className="bg-[#0d0d14] border border-white/[0.06] rounded-2xl p-12 text-center">
             <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
             <p className="text-white font-medium">No vulnerabilities found</p>
@@ -219,7 +287,7 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
             </p>
           </div>
         ) : (
-          scan.vulnerabilities.map((vuln: any) => {
+          vulnerabilities.map((vuln: any) => {
             const config =
               severityConfig[vuln.severity as keyof typeof severityConfig];
             return (
