@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Shield, AlertTriangle, CheckCircle, Clock, Globe } from "lucide-react";
+import ChatPanel from "./ChatPanel";
 
 const severityConfig = {
   CRITICAL: {
@@ -334,6 +335,7 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
           })
         )}
       </div>
+      <ChatPanel scanId={scan.id} />
     </div>
   );
 }
