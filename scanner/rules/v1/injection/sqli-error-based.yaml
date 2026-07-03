@@ -1,0 +1,34 @@
+id: sqli-error-based
+info:
+  name: SQL Injection (Error-Based)
+  severity: critical
+  category: SQLi
+  description: The application appears vulnerable to SQL injection. Error messages reveal database information to attackers.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+  payloads: sqli.txt
+  params:
+    - id
+    - search
+    - q
+    - cat
+    - artist
+    - user
+
+matchers:
+  type: body-contains-any
+  patterns:
+    - "you have an error in your sql"
+    - "warning: mysql"
+    - "mysql_fetch"
+    - "supplied argument is not a valid mysql"
+    - "unclosed quotation"
+    - "syntax error"
+    - "ora-01756"
+    - "microsoft ole db"
+    - "odbc drivers"
+    - "column count doesn't match"
+
+fix: "Use parameterized queries or prepared statements. Never concatenate user input into SQL queries."

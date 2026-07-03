@@ -1,0 +1,16 @@
+id: missing-referrer-policy
+info:
+  name: Missing Referrer-Policy
+  severity: low
+  category: Headers
+  description: The Referrer-Policy header is missing. This may leak sensitive URL information to third parties.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+
+matchers:
+  type: header-absent
+  header: referrer-policy
+
+fix: "Add 'Referrer-Policy: strict-origin-when-cross-origin' to control referrer information."

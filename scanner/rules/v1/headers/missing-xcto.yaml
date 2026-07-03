@@ -1,0 +1,16 @@
+id: missing-xcto
+info:
+  name: Missing X-Content-Type-Options
+  severity: medium
+  category: Headers
+  description: The X-Content-Type-Options header is missing. This allows browsers to MIME-sniff responses away from the declared content type.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+
+matchers:
+  type: header-absent
+  header: x-content-type-options
+
+fix: "Add 'X-Content-Type-Options: nosniff' to prevent MIME sniffing attacks."

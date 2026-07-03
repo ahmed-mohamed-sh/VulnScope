@@ -1,0 +1,16 @@
+id: security-headers-check
+info:
+  name: Missing Security Headers
+  severity: medium
+  category: Headers
+  description: Multiple important security headers are missing from the response, increasing the attack surface.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+
+matchers:
+  type: header-absent
+  header: x-xss-protection
+
+fix: "Add 'X-XSS-Protection: 1; mode=block' to enable browser XSS filtering."

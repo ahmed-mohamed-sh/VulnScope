@@ -1,0 +1,16 @@
+id: missing-permissions-policy
+info:
+  name: Missing Permissions-Policy
+  severity: low
+  category: Headers
+  description: The Permissions-Policy header is missing. This allows unrestricted access to browser features like camera, microphone, and geolocation.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+
+matchers:
+  type: header-absent
+  header: permissions-policy
+
+fix: "Add 'Permissions-Policy: geolocation=(), microphone=(), camera=()' to restrict browser features."

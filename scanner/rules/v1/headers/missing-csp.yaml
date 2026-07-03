@@ -1,0 +1,16 @@
+id: missing-csp
+info:
+  name: Missing Content-Security-Policy
+  severity: high
+  category: Headers
+  description: The Content-Security-Policy header is missing. This allows attackers to inject malicious scripts into the page.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+
+matchers:
+  type: header-absent
+  header: content-security-policy
+
+fix: "Add 'Content-Security-Policy: default-src self' to your server response headers."

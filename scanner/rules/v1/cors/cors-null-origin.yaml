@@ -1,0 +1,19 @@
+id: cors-null-origin
+info:
+  name: CORS Null Origin Allowed
+  severity: high
+  category: CORS
+  description: The server accepts 'null' as a valid CORS origin. Attackers can exploit this using sandboxed iframes to bypass CORS restrictions.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+  headers:
+    Origin: "null"
+
+matchers:
+  type: header-equals
+  header: access-control-allow-origin
+  value: "null"
+
+fix: "Never allow 'null' as a valid CORS origin. Use a strict whitelist of trusted domains."

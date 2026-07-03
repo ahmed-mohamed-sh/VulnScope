@@ -1,0 +1,22 @@
+id: file-upload
+info:
+  name: Unrestricted File Upload
+  severity: critical
+  category: File Upload
+  description: The application may allow uploading of dangerous file types. Attackers can upload web shells to execute arbitrary code.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+  payloads: file_upload.txt
+  params:
+    - file
+    - upload
+    - attachment
+    - document
+
+matchers:
+  type: status-equals
+  code: 200
+
+fix: "Validate file types using a whitelist. Store uploads outside the web root. Scan uploads for malware."

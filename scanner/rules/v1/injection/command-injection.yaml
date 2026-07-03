@@ -1,0 +1,31 @@
+id: command-injection
+info:
+  name: Command Injection
+  severity: critical
+  category: Command Injection
+  description: The application may be vulnerable to OS command injection, allowing attackers to execute arbitrary commands on the server.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+  payloads: command_injection.txt
+  params:
+    - cmd
+    - exec
+    - command
+    - run
+    - query
+    - jump
+    - code
+    - input
+
+matchers:
+  type: body-contains-any
+  patterns:
+    - "uid="
+    - "root:"
+    - "bin/bash"
+    - "bin/sh"
+    - "Volume Serial Number"
+
+fix: "Never pass user input to system commands. Use safe APIs instead of shell execution."

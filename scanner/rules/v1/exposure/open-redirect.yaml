@@ -1,0 +1,26 @@
+id: open-redirect
+info:
+  name: Open Redirect Vulnerability
+  severity: medium
+  category: Open Redirect
+  description: The application redirects users to attacker-controlled URLs. This can be used for phishing attacks.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+  payloads: open_redirect.txt
+  params:
+    - redirect
+    - url
+    - next
+    - return
+    - returnUrl
+    - redirect_url
+    - goto
+    - target
+
+matchers:
+  type: status-in
+  codes: [301, 302, 303, 307, 308]
+
+fix: "Validate redirect URLs against a whitelist of allowed domains. Never redirect to user-supplied URLs directly."

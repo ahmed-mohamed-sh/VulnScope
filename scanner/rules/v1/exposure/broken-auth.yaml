@@ -1,0 +1,26 @@
+id: broken-auth
+info:
+  name: Default Credentials
+  severity: critical
+  category: Broken Authentication
+  description: The application may accept default or weak credentials. Attackers can gain unauthorized access using common username/password combinations.
+
+request:
+  method: POST
+  path: "{{BaseURL}}/login"
+  payloads: broken_auth.txt
+  params:
+    - username
+    - password
+
+matchers:
+  type: body-contains-any
+  patterns:
+    - "welcome"
+    - "dashboard"
+    - "logout"
+    - "signed in"
+    - "logged in"
+    - "successfully"
+
+fix: "Enforce strong password policies. Implement account lockout after failed attempts. Remove default credentials."

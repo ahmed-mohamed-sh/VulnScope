@@ -1,0 +1,16 @@
+id: info-disclosure-server
+info:
+  name: Server Information Disclosure
+  severity: low
+  category: Information Disclosure
+  description: The Server header reveals information about the underlying technology stack which can help attackers target known vulnerabilities.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+
+matchers:
+  type: header-present
+  header: server
+
+fix: "Remove or obscure the 'Server' header to prevent technology fingerprinting."

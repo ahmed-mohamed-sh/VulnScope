@@ -1,0 +1,16 @@
+id: missing-xfo
+info:
+  name: Missing X-Frame-Options
+  severity: high
+  category: Headers
+  description: The X-Frame-Options header is missing. This allows attackers to embed the page in an iframe for clickjacking attacks.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+
+matchers:
+  type: header-absent
+  header: x-frame-options
+
+fix: "Add 'X-Frame-Options: DENY' to prevent clickjacking attacks."

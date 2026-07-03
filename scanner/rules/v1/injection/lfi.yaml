@@ -1,0 +1,31 @@
+id: lfi
+info:
+  name: Local File Inclusion (LFI)
+  severity: critical
+  category: LFI
+  description: The application may be vulnerable to Local File Inclusion, allowing attackers to read sensitive files from the server.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+  payloads: lfi.txt
+  params:
+    - file
+    - page
+    - include
+    - path
+    - template
+    - doc
+    - view
+
+matchers:
+  type: body-contains-any
+  patterns:
+    - "root:x:0:0"
+    - "root:*:0:0"
+    - "[boot loader]"
+    - "for 16-bit app support"
+    - "/bin/bash"
+    - "daemon:x:1"
+
+fix: "Never use user input to construct file paths. Use a whitelist of allowed files."

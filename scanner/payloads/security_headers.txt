@@ -1,0 +1,14 @@
+x-frame-options
+x-content-type-options
+strict-transport-security
+content-security-policy
+referrer-policy
+permissions-policy
+x-xss-protection
+cross-origin-embedder-policy
+cross-origin-opener-policy
+cross-origin-resource-policy
+cache-control
+pragma
+expect-ct
+feature-policy

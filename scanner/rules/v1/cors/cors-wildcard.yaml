@@ -1,0 +1,19 @@
+id: cors-wildcard
+info:
+  name: Wildcard CORS Policy
+  severity: medium
+  category: CORS
+  description: The server allows requests from any origin using a wildcard CORS policy. This can expose sensitive data to malicious websites.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+  headers:
+    Origin: "https://evil.com"
+
+matchers:
+  type: header-equals
+  header: access-control-allow-origin
+  value: "*"
+
+fix: "Restrict CORS to trusted domains instead of using wildcard (*). Use a whitelist of allowed origins."
