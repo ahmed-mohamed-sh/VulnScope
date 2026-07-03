@@ -1,0 +1,17 @@
+id: sensitive-files
+info:
+  name: Sensitive File Exposure
+  severity: critical
+  category: Exposure
+  description: Sensitive files are publicly accessible. This may expose credentials, source code, or configuration data.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+  payloads: sensitive_files.txt
+
+matchers:
+  type: status-equals
+  code: 200
+
+fix: "Restrict access to sensitive files. Add them to .gitignore and configure your web server to deny access."

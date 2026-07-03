@@ -1,0 +1,26 @@
+id: idor
+info:
+  name: Insecure Direct Object Reference (IDOR)
+  severity: high
+  category: IDOR
+  description: The application may expose direct object references that allow attackers to access unauthorized resources by manipulating IDs.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+  payloads: idor.txt
+  params:
+    - id
+    - user_id
+    - account
+    - order
+    - invoice
+    - doc_id
+    - file_id
+    - record
+
+matchers:
+  type: status-equals
+  code: 200
+
+fix: "Implement proper authorization checks. Never rely on client-supplied IDs without verifying ownership."

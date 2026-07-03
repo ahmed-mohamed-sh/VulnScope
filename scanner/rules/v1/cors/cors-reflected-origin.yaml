@@ -1,0 +1,19 @@
+id: cors-reflected-origin
+info:
+  name: Reflected CORS Origin
+  severity: high
+  category: CORS
+  description: The server reflects the attacker-controlled Origin header back in the response. Combined with credentials, this allows cross-origin attacks.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+  headers:
+    Origin: "https://evil.com"
+
+matchers:
+  type: header-equals
+  header: access-control-allow-origin
+  value: "https://evil.com"
+
+fix: "Validate the Origin header against a strict whitelist of trusted domains."

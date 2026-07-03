@@ -1,0 +1,27 @@
+id: xss-reflected
+info:
+  name: Reflected XSS Vulnerability
+  severity: high
+  category: XSS
+  description: User input is reflected in the response without proper sanitization, allowing attackers to inject malicious scripts.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+  payloads: xss.txt
+  params:
+    - q
+    - search
+    - query
+    - input
+    - name
+    - s
+
+matchers:
+  type: body-contains-any
+  patterns:
+    - "<script>alert(1)</script>"
+    - "<img src=x onerror=alert(1)>"
+    - "<svg onload=alert(1)>"
+
+fix: "Sanitize and encode all user input before rendering it in the browser. Use a Content Security Policy."

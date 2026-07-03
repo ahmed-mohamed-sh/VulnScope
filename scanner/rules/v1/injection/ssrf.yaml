@@ -1,0 +1,35 @@
+id: ssrf
+info:
+  name: Server-Side Request Forgery (SSRF)
+  severity: critical
+  category: SSRF
+  description: The application may be vulnerable to SSRF. Attackers can make the server perform requests to internal services or cloud metadata endpoints.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+  payloads: ssrf.txt
+  params:
+    - url
+    - uri
+    - path
+    - dest
+    - redirect
+    - proxy
+    - fetch
+    - load
+    - src
+    - href
+
+matchers:
+  type: body-contains-any
+  patterns:
+    - "ami-id"
+    - "instance-id"
+    - "local-ipv4"
+    - "169.254.169.254"
+    - "root:x:0:0"
+    - "Connection refused"
+    - "internal server"
+
+fix: "Validate and whitelist allowed URLs. Block requests to internal IP ranges and cloud metadata endpoints."

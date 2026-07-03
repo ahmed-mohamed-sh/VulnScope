@@ -1,0 +1,23 @@
+id: ssti
+info:
+  name: Server-Side Template Injection (SSTI)
+  severity: critical
+  category: SSTI
+  description: The application may be vulnerable to SSTI. Attackers can execute arbitrary code on the server by injecting template syntax.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+  payloads: ssti.txt
+  params:
+    - q
+    - search
+    - name
+    - template
+    - input
+
+matchers:
+  type: body-contains
+  pattern: "49"
+
+fix: "Never render user input as a template. Sanitize all input before passing to template engines."

@@ -1,0 +1,16 @@
+id: info-disclosure-xpb
+info:
+  name: X-Powered-By Information Disclosure
+  severity: low
+  category: Information Disclosure
+  description: The X-Powered-By header reveals the technology stack. Attackers can use this to find known vulnerabilities.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+
+matchers:
+  type: header-present
+  header: x-powered-by
+
+fix: "Remove the 'X-Powered-By' header from all responses."

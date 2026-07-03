@@ -1,0 +1,16 @@
+id: clickjacking
+info:
+  name: Clickjacking Vulnerability
+  severity: medium
+  category: Clickjacking
+  description: The page can be embedded in an iframe, making it vulnerable to clickjacking attacks where users are tricked into clicking hidden elements.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+
+matchers:
+  type: header-absent
+  header: x-frame-options
+
+fix: "Add 'X-Frame-Options: DENY' or use CSP 'frame-ancestors none' to prevent the page from being embedded."

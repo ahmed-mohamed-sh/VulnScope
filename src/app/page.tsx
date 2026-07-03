@@ -10,6 +10,8 @@ import {
   ChevronRight,
   Lock,
 } from "lucide-react";
+import TerminalSimulator from "@/components/TerminalSimulator";
+// import Animated from "../../Animated";
 
 const features = [
   {
@@ -35,6 +37,60 @@ const features = [
     title: "Security First",
     description:
       "Built with ethical scanning in mind — only scan targets you own or have permission to test.",
+  },
+];
+
+const scans = [
+  {
+    target: "https://target.com",
+    lines: [
+      { type: "success", text: "Scanning https://target.com" },
+      { type: "success", text: "Crawling application..." },
+      { type: "success", text: "Found 24 endpoints" },
+      { type: "success", text: "Testing XSS..." },
+      {
+        type: "error",
+        text: "Reflected XSS detected",
+        badge: "HIGH",
+      },
+      { type: "success", text: "Testing SQL Injection..." },
+      {
+        type: "error",
+        text: "SQL Injection detected",
+        badge: "CRITICAL",
+      },
+      { type: "success", text: "Generating AI recommendations..." },
+      {
+        type: "ai",
+        text: "AI generated secure code patches",
+        badge: "35/100",
+      },
+    ],
+  },
+  {
+    target: "https://shop.demo",
+    lines: [
+      { type: "success", text: "Scanning https://shop.demo" },
+      { type: "success", text: "Checking Security Headers..." },
+      {
+        type: "error",
+        text: "Missing Content-Security-Policy",
+        badge: "HIGH",
+      },
+      {
+        type: "warning",
+        text: "CORS Misconfiguration",
+        badge: "MEDIUM",
+      },
+      { type: "success", text: "Testing SSRF..." },
+      { type: "success", text: "No SSRF detected" },
+      { type: "success", text: "AI explaining findings..." },
+      {
+        type: "ai",
+        text: "Risk Score Calculated",
+        badge: "68/100",
+      },
+    ],
   },
 ];
 
@@ -121,68 +177,7 @@ export default function LandingPage() {
           </div>
         </motion.div>
 
-        {/* Hero image / mock */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="mt-16 w-full max-w-3xl"
-        >
-          <div className="bg-[#0d0d14] border border-white/[0.06] rounded-2xl p-6 text-left">
-            {/* Mock terminal */}
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-3 h-3 rounded-full bg-red-500/60" />
-              <div className="w-3 h-3 rounded-full bg-yellow-500/60" />
-              <div className="w-3 h-3 rounded-full bg-emerald-500/60" />
-              <span className="text-zinc-600 text-xs ml-2">
-                vulnscope — scan report
-              </span>
-            </div>
-
-            <div className="space-y-2 font-mono text-sm">
-              <div className="flex items-center gap-2">
-                <span className="text-emerald-400">✓</span>
-                <span className="text-zinc-400">Scanning</span>
-                <span className="text-white">https://target.com</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-emerald-400">✓</span>
-                <span className="text-zinc-400">
-                  Checking security headers...
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-emerald-400">✓</span>
-                <span className="text-zinc-400">
-                  Testing SSL/TLS configuration...
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-red-400">✗</span>
-                <span className="text-red-400">
-                  Missing Content-Security-Policy
-                </span>
-                <span className="text-xs px-2 py-0.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-full">
-                  HIGH
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-red-400">✗</span>
-                <span className="text-red-400">No HTTPS detected</span>
-                <span className="text-xs px-2 py-0.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-full">
-                  CRITICAL
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-emerald-400">✓</span>
-                <span className="text-zinc-400">AI analysis complete</span>
-                <span className="text-xs px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full">
-                  Score: 35/100
-                </span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        <TerminalSimulator />
       </section>
 
       {/* Features */}

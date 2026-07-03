@@ -1,0 +1,27 @@
+id: xxe
+info:
+  name: XML External Entity Injection (XXE)
+  severity: critical
+  category: XXE
+  description: The application may be vulnerable to XXE injection. Attackers can read local files, perform SSRF, or execute remote code.
+
+request:
+  method: POST
+  path: "{{BaseURL}}"
+  payloads: xxe.txt
+  params:
+    - xml
+    - data
+    - input
+    - body
+
+matchers:
+  type: body-contains-any
+  patterns:
+    - "root:x:0:0"
+    - "daemon:x:1"
+    - "/bin/bash"
+    - "boot loader"
+    - "<?xml"
+
+fix: "Disable XML external entity processing. Use a safe XML parser configuration."

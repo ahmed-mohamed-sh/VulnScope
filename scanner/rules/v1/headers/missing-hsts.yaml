@@ -1,0 +1,16 @@
+id: missing-hsts
+info:
+  name: Missing HSTS Header
+  severity: high
+  category: Headers
+  description: The Strict-Transport-Security header is missing. This allows attackers to perform SSL stripping attacks.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+
+matchers:
+  type: header-absent
+  header: strict-transport-security
+
+fix: "Add 'Strict-Transport-Security: max-age=31536000; includeSubDomains' to enforce HTTPS."

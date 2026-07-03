@@ -1,0 +1,16 @@
+id: info-disclosure-headers
+info:
+  name: Technology Stack Disclosure via Headers
+  severity: low
+  category: Information Disclosure
+  description: Response headers reveal information about the technology stack, helping attackers identify known vulnerabilities.
+
+request:
+  method: GET
+  path: "{{BaseURL}}"
+
+matchers:
+  type: header-present
+  header: x-aspnet-version
+
+fix: "Remove all technology-revealing headers from server responses."
