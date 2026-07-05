@@ -4,7 +4,7 @@ import { analyzeScan } from "@/lib/ai-analysis";
 
 export async function POST(req: Request) {
   try {
-    const { scanId, vulnerabilities } = await req.json();
+    const { scanId, vulnerabilities, attackChains } = await req.json();
 
     // Save vulnerabilities
     if (vulnerabilities.length > 0) {
@@ -17,6 +17,26 @@ export async function POST(req: Request) {
           category: v.category,
           evidence: v.evidence,
           fix: v.fix,
+        })),
+      });
+    }
+
+    // Save attack chains
+    if (attackChains && attackChains.length > 0) {
+      await prisma.attackChain.createMany({
+        data: attackChains.map((chain: any) => ({
+          scanId,
+          chainId: chain.id,
+          name: chain.name,
+          severity: chain.severity,
+          description: chain.description,
+          attackSteps: JSON.stringify(chain.attack_steps ?? []),
+          cvss: chain.cvss ?? 0,
+          remediation: chain.remediation ?? "",
+          involvedVulnerabilities: JSON.stringify(
+            chain.involved_vulnerabilities ?? [],
+          ),
+          aiNarrative: chain.ai_narrative ?? "",
         })),
       });
     }

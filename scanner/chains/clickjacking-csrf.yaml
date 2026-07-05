@@ -1,0 +1,21 @@
+id: clickjacking-csrf
+name: Clickjacking + CSRF Attack Chain
+severity: HIGH
+description: >
+  Missing X-Frame-Options combined with absent CSRF protection creates a
+  powerful social engineering attack. An attacker can embed the target site
+  in a transparent iframe and trick users into unknowingly performing
+  sensitive actions like transferring funds or changing account settings.
+requires:
+  - category: Clickjacking
+  - category: Headers
+attack_steps:
+  - "Attacker creates a malicious page with the target site in a transparent iframe"
+  - "Victim is tricked into clicking on the invisible iframe"
+  - "Without CSRF protection, the click performs an authenticated action"
+  - "Attacker achieves state-changing actions without victim's knowledge"
+cvss: 7.4
+remediation: >
+  Add X-Frame-Options DENY or CSP frame-ancestors none.
+  Implement CSRF tokens on all state-changing requests.
+  Use SameSite cookie attribute.

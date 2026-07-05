@@ -14,7 +14,11 @@ export async function GET(
 
   const scan = await prisma.scan.findUnique({
     where: { id: scanId },
-    include: { vulnerabilities: true },
+    include: {
+      vulnerabilities: true,
+      report: true,
+      attackChains: true,
+    },
   });
 
   if (!scan || scan.userId !== session.user.id) {

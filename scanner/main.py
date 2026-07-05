@@ -5,6 +5,7 @@ import asyncio
 import ssl
 import socket
 from engine import RuleEngine
+from chain_analyzer import ChainAnalyzer
 
 app = FastAPI()
 
@@ -12,6 +13,7 @@ NEXT_APP_URL = "http://localhost:3000"
 
 # Load engine once at startup — hot reloads rules automatically
 engine = RuleEngine(rules_dir="rules")
+chain_analyzer = ChainAnalyzer(chains_dir="chains")
 
 class ScanRequest(BaseModel):
     scanId: str
@@ -31,30 +33,38 @@ async def reload_rules():
 
 async def perform_scan(scan_id: str, target_url: str):
     vulnerabilities = []
+    attack_chains = []
     print(f"Starting scan for {target_url}")
 
     try:
-        # Check SSL separately (needs raw socket, not httpx)
         ssl_vulns = await check_ssl(target_url)
-
-        # Run all YAML rules via engine
         rule_vulns = await asyncio.wait_for(
             engine.run_all_rules(target_url),
-            timeout=60
+            timeout=120
         )
-
         vulnerabilities = ssl_vulns + rule_vulns
+
+        # Run attack chain detection
+        if vulnerabilities:
+            print(f"Running attack chain analysis...")
+            chains = chain_analyzer.analyze(vulnerabilities)
+
+            # Generate AI narratives for each chain
+            for chain in chains:
+                narrative = await chain_analyzer.generate_ai_narrative(chain, target_url)
+                chain["ai_narrative"] = narrative
+                attack_chains.append(chain)
+
+            print(f"Found {len(attack_chains)} attack chains")
 
     except asyncio.TimeoutError:
         print(f"Scan timed out for {target_url}")
     except Exception as e:
         print(f"Scan error: {e}")
 
-    print(f"Found {len(vulnerabilities)} vulnerabilities")
+    print(f"Found {len(vulnerabilities)} vulnerabilities, {len(attack_chains)} attack chains")
 
-    # Send results back to Next.js
     try:
-
         print(f"Sending results to Next.js...")
         async with httpx.AsyncClient(timeout=30) as client:
             res = await client.post(
@@ -62,11 +72,14 @@ async def perform_scan(scan_id: str, target_url: str):
                 json={
                     "scanId": scan_id,
                     "vulnerabilities": vulnerabilities,
+                    "attackChains": attack_chains,
                 }
             )
-            print(f"Results sent: {res.status_code} - {res.text}")
+            print(f"esults sent: {res.status_code} - {res.text}")
     except Exception as e:
         print(f"Failed to send results: {type(e).__name__}: {e}")
+
+
 async def check_ssl(url: str) -> list:
     """SSL check kept separate since it needs raw socket access."""
     vulns = []

@@ -1,0 +1,20 @@
+id: session-hijacking
+name: Session Hijacking via XSS + Missing Security Headers
+severity: CRITICAL
+description: >
+  Missing security headers combined with XSS allows an attacker to steal
+  session cookies and hijack authenticated user sessions. The absence of
+  HttpOnly and Secure cookie flags makes this trivially exploitable.
+requires:
+  - category: XSS
+  - category: Headers
+attack_steps:
+  - "Attacker identifies XSS vulnerability in the application"
+  - "Crafts payload to steal document.cookie via XSS"
+  - "Missing security headers allow the script to execute and exfiltrate cookies"
+  - "Attacker uses stolen session cookie to impersonate the victim"
+cvss: 8.8
+remediation: >
+  Fix XSS vulnerabilities and implement Content-Security-Policy header.
+  Set HttpOnly and Secure flags on all session cookies.
+  Implement X-Frame-Options and X-Content-Type-Options headers.
