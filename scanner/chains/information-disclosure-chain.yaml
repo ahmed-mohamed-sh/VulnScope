@@ -1,0 +1,20 @@
+id: info-disclosure-sqli
+name: Targeted SQLi via Information Disclosure
+severity: HIGH
+description: >
+  Server information disclosure combined with SQL injection is particularly
+  dangerous because the exposed technology stack helps attackers craft
+  database-specific SQL injection payloads with higher success rates.
+requires:
+  - category: Information Disclosure
+  - category: SQLi
+attack_steps:
+  - "Attacker reads Server and X-Powered-By headers to fingerprint the stack"
+  - "Identifies exact database type and version from error messages"
+  - "Crafts targeted SQL injection payloads specific to the identified database"
+  - "Extracts entire database contents using optimized database-specific syntax"
+cvss: 8.5
+remediation: >
+  Remove all technology-revealing headers from server responses.
+  Fix SQL injection using parameterized queries.
+  Implement proper error handling that doesn't reveal stack information.

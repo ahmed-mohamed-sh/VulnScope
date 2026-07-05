@@ -54,19 +54,19 @@ model Session {
 }
 
 model Scan {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   userId      String
   targetUrl   String
   status      ScanStatus @default(PENDING)
-  createdAt   DateTime @default(now())
+  createdAt   DateTime   @default(now())
   completedAt DateTime?
 
   user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   vulnerabilities Vulnerability[]
   report          Report?
-  chatMessages    ChatMessage[]   // ADD THIS LINE
+  chatMessages    ChatMessage[]
+  attackChains    AttackChain[]   
 }
-
 model Vulnerability {
   id          String   @id @default(cuid())
   scanId      String
@@ -97,6 +97,23 @@ model ChatMessage {
   role      String   // "user" or "assistant"
   content   String
   createdAt DateTime @default(now())
+
+  scan Scan @relation(fields: [scanId], references: [id], onDelete: Cascade)
+}
+
+model AttackChain {
+  id                    String   @id @default(cuid())
+  scanId                String
+  chainId               String
+  name                  String
+  severity              String
+  description           String
+  attackSteps           String   // JSON array stored as string
+  cvss                  Float
+  remediation           String
+  involvedVulnerabilities String  // JSON array stored as string
+  aiNarrative           String
+  createdAt             DateTime @default(now())
 
   scan Scan @relation(fields: [scanId], references: [id], onDelete: Cascade)
 }

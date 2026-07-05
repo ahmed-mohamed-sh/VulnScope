@@ -1,0 +1,20 @@
+id: account-takeover-xss-cors
+name: Account Takeover via XSS + CORS
+severity: CRITICAL
+description: >
+  The combination of a reflected XSS vulnerability and a misconfigured CORS
+  policy allows an attacker to inject a malicious script that makes
+  cross-origin requests with the victim's credentials, resulting in
+  full account takeover without any user interaction beyond clicking a link.
+requires:
+  - category: XSS
+  - category: CORS
+attack_steps:
+  - "Attacker crafts a malicious URL with XSS payload targeting the vulnerable parameter"
+  - "Victim clicks the link — script executes in their browser"
+  - "Script exploits CORS misconfiguration to make authenticated cross-origin requests"
+  - "Attacker receives victim session data and gains full account access"
+cvss: 9.8
+remediation: >
+  Fix the XSS vulnerability by sanitizing all user input. 
+  Restrict CORS to trusted origins only. Implement Content-Security-Policy.

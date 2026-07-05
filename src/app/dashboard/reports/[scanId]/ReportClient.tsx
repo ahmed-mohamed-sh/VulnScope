@@ -32,6 +32,151 @@ const severityConfig = {
   },
 };
 
+function AttackChainCard({ chain }: { chain: any }) {
+  const steps = JSON.parse(chain.attackSteps ?? "[]");
+  const involvedVulns = JSON.parse(chain.involvedVulnerabilities ?? "[]");
+
+  const severityConfig: Record<
+    string,
+    { color: string; bg: string; border: string }
+  > = {
+    CRITICAL: {
+      color: "text-red-400",
+      bg: "bg-red-500/10",
+      border: "border-red-500/20",
+    },
+    HIGH: {
+      color: "text-orange-400",
+      bg: "bg-orange-500/10",
+      border: "border-orange-500/20",
+    },
+    MEDIUM: {
+      color: "text-yellow-400",
+      bg: "bg-yellow-500/10",
+      border: "border-yellow-500/20",
+    },
+  };
+
+  const config = severityConfig[chain.severity] ?? severityConfig.HIGH;
+
+  return (
+    <div
+      className={`bg-[#0d0d14] border ${config.border} rounded-2xl overflow-hidden`}
+    >
+      {/* Header */}
+      <div className={`${config.bg} px-6 py-4 border-b ${config.border}`}>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div
+              className={`${config.bg} border ${config.border} rounded-lg p-1.5`}
+            >
+              <svg
+                className={`w-4 h-4 ${config.color}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p className="text-white font-semibold">{chain.name}</p>
+              <p className="text-zinc-500 text-xs mt-0.5">
+                CVSS Score: {chain.cvss}
+              </p>
+            </div>
+          </div>
+          <span
+            className={`shrink-0 text-xs px-2.5 py-1 rounded-full font-medium border ${config.color} ${config.bg} ${config.border}`}
+          >
+            {chain.severity}
+          </span>
+        </div>
+      </div>
+
+      <div className="px-6 py-4 space-y-4">
+        {/* AI Narrative */}
+        {chain.aiNarrative && (
+          <div className="bg-purple-500/5 border border-purple-500/20 rounded-xl p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse" />
+              <p className="text-purple-400 text-xs font-medium uppercase tracking-wider">
+                AI Exploit Narrative
+              </p>
+            </div>
+            <p className="text-zinc-300 text-sm leading-relaxed">
+              {chain.aiNarrative}
+            </p>
+          </div>
+        )}
+
+        {/* Description */}
+        <p className="text-zinc-400 text-sm leading-relaxed">
+          {chain.description}
+        </p>
+
+        {/* Involved Vulnerabilities */}
+        {involvedVulns.length > 0 && (
+          <div>
+            <p className="text-zinc-500 text-xs uppercase tracking-wider mb-2">
+              Vulnerabilities Involved
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {involvedVulns.map((vuln: string, i: number) => (
+                <span
+                  key={i}
+                  className="text-xs px-2.5 py-1 bg-white/[0.04] text-zinc-400 border border-white/[0.06] rounded-lg"
+                >
+                  {vuln}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Attack Steps */}
+        {steps.length > 0 && (
+          <div>
+            <p className="text-zinc-500 text-xs uppercase tracking-wider mb-3">
+              Attack Chain Steps
+            </p>
+            <div className="space-y-2">
+              {steps.map((step: string, i: number) => (
+                <div key={i} className="flex items-start gap-3">
+                  <div
+                    className={`shrink-0 w-5 h-5 rounded-full ${config.bg} border ${config.border} flex items-center justify-center mt-0.5`}
+                  >
+                    <span className={`text-xs font-bold ${config.color}`}>
+                      {i + 1}
+                    </span>
+                  </div>
+                  <p className="text-zinc-300 text-sm">{step}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Remediation */}
+        {chain.remediation && (
+          <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-4">
+            <p className="text-xs text-emerald-400 uppercase tracking-wider mb-2">
+              Remediation
+            </p>
+            <p className="text-zinc-300 text-sm leading-relaxed">
+              {chain.remediation}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 export default function ReportClient({ initialScan }: { initialScan: any }) {
   const [scan, setScan] = useState(initialScan);
 
@@ -275,6 +420,45 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
           ))}
         </div>
       </div>
+
+      {/* Attack Chains */}
+      {scan.attackChains && scan.attackChains.length > 0 && (
+        <div className="space-y-4 mb-8">
+          <div className="flex items-center gap-3">
+            <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-2">
+              <svg
+                className="w-5 h-5 text-red-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-white font-semibold">
+                Attack Chains Detected
+              </h2>
+              <p className="text-zinc-500 text-xs mt-0.5">
+                {scan.attackChains.length} dangerous vulnerability combination
+                {scan.attackChains.length > 1 ? "s" : ""} found
+              </p>
+            </div>
+            <span className="ml-auto text-xs px-2.5 py-1 bg-red-500/10 text-red-400 border border-red-500/20 rounded-full font-medium">
+              High Priority
+            </span>
+          </div>
+
+          {scan.attackChains.map((chain: any) => (
+            <AttackChainCard key={chain.id} chain={chain} />
+          ))}
+        </div>
+      )}
 
       {/* Vulnerabilities */}
       <div className="space-y-4">

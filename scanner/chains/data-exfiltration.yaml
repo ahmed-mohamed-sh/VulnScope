@@ -1,0 +1,21 @@
+id: data-exfiltration-sqli-nossl
+name: Data Exfiltration via SQLi + No HTTPS
+severity: CRITICAL
+description: >
+  The combination of a SQL injection vulnerability and missing HTTPS means
+  an attacker can both intercept credentials in transit AND directly query
+  the database. This creates a dual attack path resulting in complete
+  data breach of all stored information.
+requires:
+  - category: SQLi
+  - category: SSL
+attack_steps:
+  - "Attacker performs man-in-the-middle attack on unencrypted HTTP traffic"
+  - "Intercepts database credentials or session tokens in plaintext"
+  - "Uses SQL injection to directly query and dump entire database"
+  - "Exfiltrates all user data, passwords, and sensitive records"
+cvss: 9.9
+remediation: >
+  Immediately enable HTTPS with a valid TLS certificate.
+  Fix SQL injection by using parameterized queries.
+  Never transmit sensitive data over unencrypted connections.

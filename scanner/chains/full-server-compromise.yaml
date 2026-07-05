@@ -1,0 +1,22 @@
+id: full-server-compromise
+name: Full Server Compromise via LFI + Command Injection
+severity: CRITICAL
+description: >
+  The combination of Local File Inclusion and Command Injection vulnerabilities
+  creates a path to complete server compromise. An attacker can read sensitive
+  configuration files via LFI to discover credentials, then use command injection
+  to execute arbitrary OS commands with the web server's privileges.
+requires:
+  - category: LFI
+  - category: Command Injection
+attack_steps:
+  - "Attacker exploits LFI to read /etc/passwd and configuration files"
+  - "Discovers database credentials and internal service configurations"
+  - "Uses command injection to execute reverse shell payload"
+  - "Gains persistent access to the server with web server privileges"
+  - "Pivots to internal network and escalates privileges"
+cvss: 10.0
+remediation: >
+  Sanitize all file path inputs and never pass user input to system commands.
+  Run the web server with minimal required privileges.
+  Implement a Web Application Firewall (WAF).
