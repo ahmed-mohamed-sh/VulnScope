@@ -33,8 +33,26 @@ const severityConfig = {
 };
 
 function AttackChainCard({ chain }: { chain: any }) {
-  const steps = JSON.parse(chain.attackSteps ?? "[]");
-  const involvedVulns = JSON.parse(chain.involvedVulnerabilities ?? "[]");
+  let steps: string[] = [];
+  let involvedVulns: string[] = [];
+
+  try {
+    steps =
+      typeof chain.attackSteps === "string"
+        ? JSON.parse(chain.attackSteps)
+        : (chain.attackSteps ?? []);
+  } catch {
+    steps = [];
+  }
+
+  try {
+    involvedVulns =
+      typeof chain.involvedVulnerabilities === "string"
+        ? JSON.parse(chain.involvedVulnerabilities)
+        : (chain.involvedVulnerabilities ?? []);
+  } catch {
+    involvedVulns = [];
+  }
 
   const severityConfig: Record<
     string,
@@ -196,6 +214,7 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
   }, [scan.status]);
 
   const vulnerabilities = scan.vulnerabilities ?? [];
+  const attackChains = scan.attackChains ?? [];
   const criticalCount = vulnerabilities.filter(
     (v: any) => v.severity === "CRITICAL",
   ).length;
@@ -422,7 +441,7 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
       </div>
 
       {/* Attack Chains */}
-      {scan.attackChains && scan.attackChains.length > 0 && (
+      {attackChains.length > 0 && (
         <div className="space-y-4 mb-8">
           <div className="flex items-center gap-3">
             <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-2">
@@ -445,8 +464,8 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
                 Attack Chains Detected
               </h2>
               <p className="text-zinc-500 text-xs mt-0.5">
-                {scan.attackChains.length} dangerous vulnerability combination
-                {scan.attackChains.length > 1 ? "s" : ""} found
+                {attackChains.length} dangerous vulnerability combination
+                {attackChains.length > 1 ? "s" : ""} found
               </p>
             </div>
             <span className="ml-auto text-xs px-2.5 py-1 bg-red-500/10 text-red-400 border border-red-500/20 rounded-full font-medium">
@@ -454,7 +473,7 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
             </span>
           </div>
 
-          {scan.attackChains.map((chain: any) => (
+          {attackChains.map((chain: any) => (
             <AttackChainCard key={chain.id} chain={chain} />
           ))}
         </div>
