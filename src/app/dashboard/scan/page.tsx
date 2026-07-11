@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Lock,
 } from "lucide-react";
+import VulnPrediction from "@/components/VulnPrediction";
 
 const scanTypes = [
   {
@@ -136,6 +137,9 @@ export default function NewScanPage() {
               />
             </div>
           </div>
+
+          {/* AI Prediction */}
+          {url && <VulnPrediction targetUrl={url} />}
 
           {/* Ownership checkbox */}
           <div
