@@ -482,6 +482,48 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
       {/* Vulnerabilities */}
       <div className="space-y-4">
         <h2 className="text-white font-semibold">Vulnerabilities Found</h2>
+        {/* Verification Summary */}
+        {vulnerabilities.length > 0 && (
+          <div className="flex items-center gap-4 mb-4 p-4 bg-[#0d0d14] border border-white/[0.06] rounded-xl">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-emerald-400 rounded-full" />
+              <span className="text-zinc-400 text-sm">
+                <span className="text-white font-medium">
+                  {
+                    vulnerabilities.filter((v: any) => v.confidence === "HIGH")
+                      .length
+                  }
+                </span>{" "}
+                Verified
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-yellow-400 rounded-full" />
+              <span className="text-zinc-400 text-sm">
+                <span className="text-white font-medium">
+                  {
+                    vulnerabilities.filter(
+                      (v: any) => v.confidence === "MEDIUM",
+                    ).length
+                  }
+                </span>{" "}
+                Possible
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-zinc-500 rounded-full" />
+              <span className="text-zinc-400 text-sm">
+                <span className="text-white font-medium">
+                  {
+                    vulnerabilities.filter((v: any) => v.confidence === "LOW")
+                      .length
+                  }
+                </span>{" "}
+                Unverified
+              </span>
+            </div>
+          </div>
+        )}
         {vulnerabilities.length === 0 ? (
           <div className="bg-[#0d0d14] border border-white/[0.06] rounded-2xl p-12 text-center">
             <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
@@ -500,13 +542,41 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
                 className="bg-[#0d0d14] border border-white/[0.06] rounded-2xl p-6"
               >
                 <div className="flex items-start justify-between gap-4 mb-3">
-                  <h3 className="text-white font-medium">{vuln.title}</h3>
+                  <div className="flex items-start gap-2">
+                    <h3 className="text-white font-medium">{vuln.title}</h3>
+                    {/* Verification badge */}
+                    {vuln.confidence === "HIGH" && (
+                      <span className="shrink-0 text-xs px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full mt-0.5">
+                        ✓ Verified
+                      </span>
+                    )}
+                    {vuln.confidence === "LOW" && (
+                      <span className="shrink-0 text-xs px-2 py-0.5 bg-zinc-500/10 text-zinc-500 border border-zinc-500/20 rounded-full mt-0.5">
+                        ? Unverified
+                      </span>
+                    )}
+                    {vuln.confidence === "MEDIUM" && (
+                      <span className="shrink-0 text-xs px-2 py-0.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 rounded-full mt-0.5">
+                        ~ Possible
+                      </span>
+                    )}
+                  </div>
                   <span
                     className={`shrink-0 text-xs px-2.5 py-1 rounded-full font-medium border ${config.color} ${config.bg} ${config.border}`}
                   >
                     {vuln.severity}
                   </span>
                 </div>
+
+                {/* Verification Note */}
+                {vuln.verificationNote && (
+                  <div className="bg-white/[0.02] border border-white/[0.04] rounded-lg px-3 py-2 mb-3">
+                    <p className="text-zinc-400 text-xs">
+                      {vuln.verificationNote}
+                    </p>
+                  </div>
+                )}
+
                 <p className="text-zinc-400 text-sm mb-4">{vuln.description}</p>
                 <div className="space-y-3">
                   {vuln.evidence && (
@@ -528,10 +598,20 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
                     </div>
                   )}
                 </div>
-                <div className="mt-3">
+                <div className="mt-3 flex items-center gap-2 flex-wrap">
                   <span className="text-xs px-2 py-0.5 bg-white/[0.04] text-zinc-500 rounded-md">
                     {vuln.category}
                   </span>
+                  {vuln.isFalsePositive && (
+                    <span className="text-xs px-2 py-0.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-md">
+                      False Positive
+                    </span>
+                  )}
+                  {vuln.isConfirmed && (
+                    <span className="text-xs px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-md">
+                      Confirmed
+                    </span>
+                  )}
                 </div>
               </div>
             );
