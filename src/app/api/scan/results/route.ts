@@ -17,6 +17,9 @@ export async function POST(req: Request) {
           category: v.category,
           evidence: v.evidence,
           fix: v.fix,
+          verified: v.verified ?? true,
+          confidence: v.confidence ?? "MEDIUM",
+          verificationNote: v.verification_note ?? null,
         })),
       });
     }

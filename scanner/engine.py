@@ -5,7 +5,8 @@ import asyncio
 import time
 from matchers import get_matcher, list_matchers
 from rule_validator import validate_rule
-
+from verifier import VulnVerifier
+verifier = VulnVerifier()
 
 class RuleEngine:
     def __init__(self, rules_dir: str = "rules"):
@@ -76,8 +77,9 @@ class RuleEngine:
             ) as client:
                 try:
                     base_response = await client.get(target_url)
+                    print(f"Base URL fetched: {base_response.status_code}")
                 except Exception as e:
-                    print(f"Failed to fetch base URL: {e}")
+                    print(f"Failed to fetch base URL: {type(e).__name__}: {e}")
                     return findings
 
                 tasks = [
@@ -87,18 +89,35 @@ class RuleEngine:
 
                 results = await asyncio.gather(*tasks, return_exceptions=True)
 
+                raw_findings = []
                 for result in results:
                     if isinstance(result, list):
-                        findings.extend(result)
+                        raw_findings.extend(result)
                     elif isinstance(result, dict):
-                        findings.append(result)
+                        raw_findings.append(result)
                     elif isinstance(result, Exception):
                         print(f"Rule execution error: {result}")
+
+                # Verify all findings
+                print(f"Verifying {len(raw_findings)} findings...")
+                verify_tasks = [
+                    verifier.verify(finding, target_url)
+                    for finding in raw_findings
+                ]
+                verified = await asyncio.gather(*verify_tasks, return_exceptions=True)
+
+                for result in verified:
+                    if isinstance(result, dict):
+                        # Only include verified findings OR unverified medium confidence
+                        if result.get("verified") or result.get("confidence") == "MEDIUM":
+                            findings.append(result)
+                        else:
+                            print(f"False positive removed: {result.get('title')} — {result.get('verification_note')}")
 
         except Exception as e:
             print(f"Engine error: {e}")
 
-        print(f"Found {len(findings)} vulnerabilities")
+        print(f"Found {len(findings)} verified vulnerabilities")
         return findings
 
     async def _execute_rule(self, rule: dict, target_url: str, client: httpx.AsyncClient, base_response) -> list | dict | None:

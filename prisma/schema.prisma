@@ -76,9 +76,13 @@ model Vulnerability {
   category    String   // e.g. XSS, SQLi, IDOR, Headers
   evidence    String?  // proof of concept
   fix         String?  // AI recommendation
+  verified         Boolean  @default(true)
+  confidence       String   @default("MEDIUM")
+  verificationNote String?
 
   scan Scan @relation(fields: [scanId], references: [id], onDelete: Cascade)
 }
+
 
 model Report {
   id        String   @id @default(cuid())
