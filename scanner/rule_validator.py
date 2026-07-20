@@ -114,7 +114,7 @@ def validate_file(filepath: str) -> bool:
     real_errors = [e for e in errors if not e.startswith("⚠️")]
 
     if real_errors:
-        print(f"❌ Rule invalid: {rule.get('id', 'unknown')}")
+        print(f"Rule invalid: {rule.get('id', 'unknown')}")
         for err in real_errors:
             print(f"   → {err}")
         for warn in warnings:
@@ -176,5 +176,5 @@ if __name__ == "__main__":
         results = validate_directory(target)
         sys.exit(0 if results["invalid"] == 0 else 1)
     else:
-        print(f"❌ '{target}' is not a valid file or directory")
+        print(f"'{target}' is not a valid file or directory")
         sys.exit(1)

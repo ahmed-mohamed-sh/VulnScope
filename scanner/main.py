@@ -6,6 +6,11 @@ import ssl
 import socket
 from engine import RuleEngine
 from chain_analyzer import ChainAnalyzer
+from exploiter import ExploitationEngine
+
+engine = RuleEngine(rules_dir="rules")
+chain_analyzer = ChainAnalyzer(chains_dir="chains")
+exploitation_engine = ExploitationEngine()
 
 app = FastAPI()
 
@@ -42,19 +47,28 @@ async def perform_scan(scan_id: str, target_url: str):
             engine.run_all_rules(target_url),
             timeout=120
         )
-        vulnerabilities = ssl_vulns + rule_vulns
+        all_vulns = ssl_vulns + rule_vulns
+
+        # Exploit confirmed vulnerabilities
+        print(f"Running exploitation engine on {len(all_vulns)} findings...")
+        exploit_tasks = [
+            exploitation_engine.exploit(vuln, target_url)
+            for vuln in all_vulns
+        ]
+        vulnerabilities = await asyncio.gather(*exploit_tasks, return_exceptions=True)
+        vulnerabilities = [v for v in vulnerabilities if isinstance(v, dict)]
+
+        exploited_count = sum(1 for v in vulnerabilities if v.get("exploited"))
+        print(f"Successfully exploited {exploited_count}/{len(vulnerabilities)} vulnerabilities")
 
         # Run attack chain detection
         if vulnerabilities:
             print(f"Running attack chain analysis...")
             chains = chain_analyzer.analyze(vulnerabilities)
-
-            # Generate AI narratives for each chain
             for chain in chains:
                 narrative = await chain_analyzer.generate_ai_narrative(chain, target_url)
                 chain["ai_narrative"] = narrative
                 attack_chains.append(chain)
-
             print(f"Found {len(attack_chains)} attack chains")
 
     except asyncio.TimeoutError:
@@ -75,10 +89,9 @@ async def perform_scan(scan_id: str, target_url: str):
                     "attackChains": attack_chains,
                 }
             )
-            print(f"esults sent: {res.status_code} - {res.text}")
+            print(f"Results sent: {res.status_code} - {res.text}")
     except Exception as e:
         print(f"Failed to send results: {type(e).__name__}: {e}")
-
 
 async def check_ssl(url: str) -> list:
     """SSL check kept separate since it needs raw socket access."""

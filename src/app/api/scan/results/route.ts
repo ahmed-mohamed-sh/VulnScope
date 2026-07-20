@@ -20,6 +20,9 @@ export async function POST(req: Request) {
           verified: v.verified ?? true,
           confidence: v.confidence ?? "MEDIUM",
           verificationNote: v.verification_note ?? null,
+          exploited: v.exploited ?? false,
+          poc: v.poc ?? null,
+          extractedData: v.extracted_data ?? null,
         })),
       });
     }
