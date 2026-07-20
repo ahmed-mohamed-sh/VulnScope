@@ -597,6 +597,39 @@ export default function ReportClient({ initialScan }: { initialScan: any }) {
                       <p className="text-zinc-300 text-sm">{vuln.fix}</p>
                     </div>
                   )}
+                  {/* Exploitation Evidence */}
+                  {vuln.exploited && (
+                    <div className="mt-4 space-y-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse" />
+                        <p className="text-red-400 text-xs font-medium uppercase tracking-wider">
+                          Exploitation Successful — Real Evidence
+                        </p>
+                      </div>
+
+                      {vuln.poc && (
+                        <div className="bg-black/40 rounded-xl p-3 border border-red-500/10">
+                          <p className="text-xs text-zinc-500 mb-1.5 uppercase tracking-wider">
+                            Proof of Concept
+                          </p>
+                          <pre className="text-red-300 text-xs font-mono whitespace-pre-wrap break-all">
+                            {vuln.poc}
+                          </pre>
+                        </div>
+                      )}
+
+                      {vuln.extractedData && (
+                        <div className="bg-black/40 rounded-xl p-3 border border-red-500/10">
+                          <p className="text-xs text-zinc-500 mb-1.5 uppercase tracking-wider">
+                            Extracted Data
+                          </p>
+                          <pre className="text-orange-300 text-xs font-mono whitespace-pre-wrap break-all">
+                            {vuln.extractedData}
+                          </pre>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <div className="mt-3 flex items-center gap-2 flex-wrap">
                   <span className="text-xs px-2 py-0.5 bg-white/[0.04] text-zinc-500 rounded-md">
