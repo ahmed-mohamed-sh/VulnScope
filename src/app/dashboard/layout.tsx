@@ -14,6 +14,7 @@ import {
   Menu,
   X,
   Zap,
+  GitCompare,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
@@ -22,6 +23,7 @@ const navItems = [
   { label: "New Scan", href: "/dashboard/scan", icon: Search },
   { label: "Reports", href: "/dashboard/reports", icon: FileText },
   { label: "Intel Feed", href: "/dashboard/intel", icon: Zap },
+  { label: "Compare", href: "/dashboard/compare", icon: GitCompare },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
