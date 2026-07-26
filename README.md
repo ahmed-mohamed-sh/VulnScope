@@ -1,5 +1,3 @@
-cat > /mnt/user-data/outputs/README.md << 'EOF'
-
 <div align="center">
 
 <img src="https://img.shields.io/badge/VulnScope-AI%20Powered-10b981?style=for-the-badge&logo=shield&logoColor=white" />
@@ -22,9 +20,9 @@ _Automatically scan, exploit, and report web vulnerabilities like a senior pente
 
 ## 📸 Screenshots
 
-| Landing Page                   | Dashboard                          | Scan Report                  |
-| ------------------------------ | ---------------------------------- | ---------------------------- |
-| ![Landing](./docs/landing.png) | ![Dashboard](./docs/dashboard.png) | ![Report](./docs/report.png) |
+| Landing Page                    | Dashboard                           | Scan Report                   |
+| ------------------------------- | ----------------------------------- | ----------------------------- |
+| ![Landing](./docs/landing.jpeg) | ![Dashboard](./docs/dashboard.jpeg) | ![Report](./docs/report.jpeg) |
 
 ---
 
