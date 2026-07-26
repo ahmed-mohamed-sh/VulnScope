@@ -384,7 +384,7 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 **Ahmed Mohamed**
 
-- 🎓 Computer Science Student @ HTI Egypt
+- 🎓 Computer Science Student @ MNU Egypt
 - 💼 Frontend/Fullstack Developer
 - 🔐 Cybersecurity Enthusiast (NTI Creativa Track)
 - 🤖 AI/ML Engineer
