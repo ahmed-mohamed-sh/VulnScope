@@ -7,6 +7,7 @@ import socket
 from engine import RuleEngine
 from chain_analyzer import ChainAnalyzer
 from exploiter import ExploitationEngine
+import os
 
 engine = RuleEngine(rules_dir="rules")
 chain_analyzer = ChainAnalyzer(chains_dir="chains")
@@ -14,7 +15,7 @@ exploitation_engine = ExploitationEngine()
 
 app = FastAPI()
 
-NEXT_APP_URL = "http://localhost:3000"
+NEXT_APP_URL = os.environ.get("NEXT_APP_URL", "http://localhost:3000")
 
 # Load engine once at startup — hot reloads rules automatically
 engine = RuleEngine(rules_dir="rules")
@@ -29,6 +30,13 @@ async def run_scan(req: ScanRequest):
     loop = asyncio.get_event_loop()
     loop.create_task(perform_scan(req.scanId, req.targetUrl))
     return {"status": "started"}
+
+@app.get("/health")
+async def health():
+    return {
+        "status": "ok",
+        "rules": len(engine.rules)
+    }
 
 @app.post("/reload-rules")
 async def reload_rules():
