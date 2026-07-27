@@ -48,13 +48,12 @@ export async function POST(req: Request) {
 
 async function triggerScan(scanId: string, targetUrl: string) {
   try {
-    await fetch(`http://localhost:8000/scan`, {
+    await fetch(`${process.env.SCANNER_URL ?? "http://localhost:8000"}/scan`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ scanId, targetUrl }),
     });
   } catch {
-    // Scanner not running, mark as failed
     await prisma.scan.update({
       where: { id: scanId },
       data: { status: "FAILED" },
