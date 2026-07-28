@@ -2,17 +2,19 @@ import yaml
 import os
 from groq import Groq
 import httpx
-from dotenv import load_dotenv
 
-load_dotenv("../.env")  # loads from the project root .env
-
-client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 class ChainAnalyzer:
     def __init__(self, chains_dir: str = "chains"):
-        self.chains_dir = chains_dir
-        self.chain_rules = self._load_chains()
-
+         self.chains_dir = chains_dir
+         self.chain_rules = self._load_chains()
+         api_key = os.getenv("GROQ_API_KEY")
+         if not api_key:
+            raise RuntimeError("GROQ_API_KEY environment variable is not set")
+         print("KEY EXISTS:", os.getenv("GROQ_API_KEY") is not None)
+         print("KEY LENGTH:", len(os.getenv("GROQ_API_KEY", "")))
+         print("KEY START:", os.getenv("GROQ_API_KEY", "")[:8])
+         self.client = Groq(api_key=api_key)
     def _load_chains(self) -> list:
         """Load all chain rule YAML files."""
         chains = []
@@ -79,7 +81,7 @@ class ChainAnalyzer:
             steps = "\n".join([f"{i+1}. {step}" for i, step in enumerate(chain.get("attack_steps", []))])
             vulns = ", ".join(chain.get("involved_vulnerabilities", []))
 
-            response = client.chat.completions.create(
+            response = self.client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
                 messages=[
                     {

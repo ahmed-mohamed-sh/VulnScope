@@ -34,6 +34,13 @@ export async function POST(req: Request) {
       },
     });
 
+    console.log("CREATED SCAN:", scan.id);
+    const check = await prisma.scan.findUnique({
+      where: { id: scan.id },
+    });
+
+    console.log("FOUND AFTER CREATE:", check);
+
     // Trigger Python scanner in background
     triggerScan(scan.id, targetUrl);
 

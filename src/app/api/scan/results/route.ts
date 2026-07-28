@@ -51,6 +51,8 @@ export async function POST(req: Request) {
     const scan = await prisma.scan.findUnique({
       where: { id: scanId },
     });
+    console.log("RESULT ROUTE SCAN:", scan);
+    console.log("RESULT ROUTE SCAN ID:", scanId);
 
     // Run AI analysis
     let aiResult = null;
